@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Lecture {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -18,9 +19,8 @@ public class Lecture {
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Lob
-    @Column(name = "file", columnDefinition="BLOB")
-    byte[] file;
+    @Column(name = "link", length = 700)
+    String link;
 
     @Column(name = "file_name")
     String fileName;

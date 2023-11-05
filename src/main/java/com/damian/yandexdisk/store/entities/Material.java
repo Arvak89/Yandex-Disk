@@ -18,9 +18,8 @@ public class Material {
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Lob
-    @Column(name = "file", columnDefinition = "BLOB")
-    byte[] file;
+    @Column(name = "link", length = 700)
+    String link;
 
     @Column(name = "name")
     String name;
