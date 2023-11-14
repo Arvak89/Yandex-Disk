@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,7 +19,6 @@ import java.util.TimerTask;
 public class YandexDiskApplication implements CommandLineRunner {
 
     Disk disk;
-    LectureService lectureService;
 
     public static void main(String[] args) {
         SpringApplication.run(YandexDiskApplication.class, args);
@@ -26,21 +26,26 @@ public class YandexDiskApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-//        TimerTask task = new TimerTask() {
-//            @Override
-//            public void run() {
-//
-//                disk.checkNewFiles();
-//
-//
-//
-//            }
-//        };
-//
-//        Timer timer = new Timer();
-//
-//        long delay = 1000L;
-//        timer.schedule(task,0, delay);
+
+        TimerTask task = new TimerTask() {
+
+            @Override
+            public void run() {
+
+                disk.removeOldFiles();
+                disk.checkNewFiles();
+
+            }
+        };
+
+        Timer timer = new Timer();
+        long delay = (1000 * 60);
+        timer.schedule(task, 0, delay);
+
+//        timeRepo.save(Time.builder()
+//                .time(new Date(1))
+//                .id(1L)
+//                .build());
 
 //        disk.removeOldFiles();
 
@@ -49,7 +54,7 @@ public class YandexDiskApplication implements CommandLineRunner {
 //        lectureService.saveLecture(121231213, "1321asd12sdas", new byte[] {});
 //        lectureService.saveLecture(121233, "13213asd12sdas", new byte[] {});
 
-        disk.checkNewFiles();
+//        disk.checkNewFiles();
 
     }
 }

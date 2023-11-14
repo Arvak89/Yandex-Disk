@@ -18,9 +18,10 @@ public class QuestionService {
 
     QuestionRepo questionRepo;
 
-    public void saveQuestion(String fileName, String link) {
+    public void saveQuestion(Long id, String fileName, String link) {
 
         questionRepo.save(Question.builder()
+                        .id(id)
                 .fileName(fileName)
                 .link(link)
                 .build());

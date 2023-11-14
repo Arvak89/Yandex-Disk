@@ -17,9 +17,10 @@ public class LectureService {
 
     LectureRepo lectureRepo;
 
-    public void saveLecture(int year, String fileName, String link){
+    public void saveLecture(Long id, int year, String fileName, String link){
 
         lectureRepo.save(Lecture.builder()
+                        .id(id)
                 .year(year)
                 .fileName(fileName)
                 .link(link)

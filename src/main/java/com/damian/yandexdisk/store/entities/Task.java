@@ -16,18 +16,17 @@ import java.util.List;
 @Builder
 public class Task{
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     String fileName;
 
-    @Column(name = "link", length = 700)
+    @Column(name = "link", length = 700, nullable = false)
     String link;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
     List<Material> materials;
 
     @Column

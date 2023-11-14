@@ -19,9 +19,10 @@ public class TaskService {
 
     TaskRepo taskRepo;
 
-    public void saveTask(String fileName, String deadline, String link) {
+    public void saveTask(Long id, String fileName, String deadline, String link) {
 
         taskRepo.save(Task.builder()
+                .id(id)
                 .fileName(fileName)
                 .deadline(deadline)
                 .link(link)

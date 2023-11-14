@@ -13,15 +13,14 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class Material{
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "link", length = 700)
+    @Column(name = "link", length = 700, nullable = false)
     String link;
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     String fileName;
 
     @ManyToOne

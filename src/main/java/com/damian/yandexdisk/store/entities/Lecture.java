@@ -14,16 +14,16 @@ import lombok.experimental.FieldDefaults;
 @ToString
 public class Lecture{
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "link", length = 700)
+    @Column(name = "link", length = 700, nullable = false)
     String link;
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     String fileName;
 
+    @Column(name = "year", nullable = false)
     int year;
 }

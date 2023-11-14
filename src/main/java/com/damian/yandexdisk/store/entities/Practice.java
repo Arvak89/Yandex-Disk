@@ -13,12 +13,11 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class Practice{
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "link", length = 700)
+    @Column(name = "link", length = 700, nullable = false)
     String link;
 
     @Column(name = "file_name")

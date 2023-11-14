@@ -18,9 +18,10 @@ public class PracticeService {
 
     PracticeRepo practiceRepo;
 
-    public void savePractice(int year, String fileName, String link){
+    public void savePractice(Long id, int year, String fileName, String link){
 
         practiceRepo.save(Practice.builder()
+                        .id(id)
                 .year(year)
                 .fileName(fileName)
                 .link(link)
