@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +19,22 @@ public class TaskService {
 
     TaskRepo taskRepo;
 
-    public void saveTask(int year, String type, String name, Date deadline){
+    public void saveTask(String fileName, String deadline, String link) {
 
         taskRepo.save(Task.builder()
-                .type(type)
-                .name(name)
+                .fileName(fileName)
                 .deadline(deadline)
+                .link(link)
                 .build());
+    }
+
+    public List<Task> fetchAll() {
+
+        return taskRepo.findAll();
+    }
+
+    public void removeTask(String fileName) {
+
+        taskRepo.deleteByFileName(fileName);
     }
 }

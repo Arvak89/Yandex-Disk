@@ -11,16 +11,16 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-public class Question {
+public class Question{
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column()
-    String question;
+    @Column(name = "link", length = 700)
+    String link;
 
-    @Column()
-    String answer;
+    @Column(name = "file_name")
+    String fileName;
 }

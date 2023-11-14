@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class LectureService {
         return lectureRepo.findAll();
     }
 
-    public Lecture removeLecture(long lectureId){
+    public void removeLecture(String fileName){
 
-        return lectureRepo.deleteById(lectureId);
+        lectureRepo.deleteByFileName(fileName);
     }
 }

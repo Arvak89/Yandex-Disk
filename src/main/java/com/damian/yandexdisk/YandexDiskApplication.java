@@ -48,7 +48,6 @@ public class YandexDiskApplication implements CommandLineRunner {
 //        lectureService.saveLecture(121123233, "132131asdas2sdas", new byte[] {});
 //        lectureService.saveLecture(121231213, "1321asd12sdas", new byte[] {});
 //        lectureService.saveLecture(121233, "13213asd12sdas", new byte[] {});
-//        System.out.println(lectureService.removeLecture(52));
 
         disk.checkNewFiles();
 

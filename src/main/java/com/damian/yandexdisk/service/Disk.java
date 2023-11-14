@@ -1,7 +1,6 @@
 package com.damian.yandexdisk.service;
 
-import com.damian.yandexdisk.store.entities.Lecture;
-import com.damian.yandexdisk.store.entities.Time;
+import com.damian.yandexdisk.store.entities.*;
 import com.damian.yandexdisk.store.repositories.TimeRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,12 +12,10 @@ import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static org.apache.naming.SelectorContext.prefix;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -79,52 +74,49 @@ public class Disk {
 
 //                        if (time.get(0).getTime().before(timeOfFile)) {
                         if (true) {
+                            String name = el.get("name").asText();
+                            String file = el.get("file").asText();
                             switch (dir) {
-                                case "Practices": {
-                                    String name = el.get("name").asText();
-                                    practiceService.savePractice(
-                                            Integer.parseInt(name.substring(name.length() - 6)),
-                                            name,
-                                            el.get("file").asText()
-                                    );
-                                    break;
-                                }
-                                case "Lectures": {
+                                case "1)Lectures": {
                                     lectureService.saveLecture(
-                                            2134,
-                                            "asdasdas",
-                                            el.get("file").asText()
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file
                                     );
                                     break;
                                 }
-                                case "Materials": {
-                                    materialService.saveMaterial(
-                                            el.get("name").asText(),
-                                            el.get("file").asText()
+                                case "2)Practices": {
+                                    practiceService.savePractice(
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file
                                     );
-                                    System.out.println(el.get("file").asText());
                                     break;
                                 }
-                                case "Tasks": {
+                                case "3)Tasks": {
                                     taskService.saveTask(
-                                            2103,
-                                            "type",
-                                            "name",
-                                            new Date()
+                                            name,
+                                            name.substring(name.indexOf("-") + 1, name.indexOf(".")),
+                                            file
                                     );
                                     break;
                                 }
-                                case "Questions": {
-                                    String name = el.get("name").asText();
+                                case "4)Materials": {
+                                    materialService.saveMaterial(
+                                            name,
+                                            file,
+                                            Long.valueOf(name.substring(0, 1))
+                                    );
+                                    break;
+                                }
+                                case "5)Questions": {
                                     questionService.saveQuestion(
-                                            Integer.parseInt(name.substring(name.length() - 6)),
-                                            "question",
-                                            "answer"
+                                            name,
+                                            file
                                     );
                                     break;
                                 }
                             }
-
                         }
                     }
                 }
@@ -132,44 +124,125 @@ public class Disk {
         }
     }
 
-//        timeRepo.save(Time.builder()
+    //        timeRepo.save(Time.builder()
 //                .time(new Date())
 //                .id(1L)
 //                .build());
 //    }
 //
-//    public void removeOldFiles() {
-//        JsonNode json = connectDisk("").get("_embedded").get("items");
-//
-//        if (!json.isEmpty()) {
-//
-//            json.forEach((e) -> {
-//
-////                if (e.get("type").asText().equals("dir")) {
-//                if (true) {
-//                    String dir = e.get("name").asText();
-//
-//                    switch (dir) {
-//                        case "Lectures": {
-//
-//                            List<String> lectures = lectureService.fetchAll().stream().map(lecture -> lecture.getFileName()).collect(Collectors.toList());
-//                            System.out.println(lectures);
-//                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
-//                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
-//
-//                            for (JsonNode el : jsonSecond) {
-////
-////                                lectures.
-////                                System.out.println(el.get("name").asText());
-////
-//                            }
-//
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//    }
+    public void removeOldFiles() {
+        JsonNode json = connectDisk("").get("_embedded").get("items");
+
+        if (!json.isEmpty()) {
+
+            json.forEach((e) -> {
+
+                if (e.get("type").asText().equals("dir")) {
+
+                    String dir = e.get("name").asText();
+
+                    switch (dir) {
+                        case "1)Lectures": {
+
+                            List<String> lectures = lectureService.fetchAll().stream().map(Lecture::getFileName).collect(Collectors.toList());
+                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+
+                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
+
+                            for (JsonNode el : jsonSecond) {
+                                for (String lecture : lectures) {
+                                    if (el.get("name").asText().equals(lecture)) {
+                                        lectures.remove(lecture);
+                                        break;
+                                    }
+                                }
+
+                                if (!lectures.isEmpty()) {
+                                    lectures.forEach(lectureService::removeLecture);
+                                }
+                            }
+                        }
+                        case "2)Practices": {
+                            List<String> practices = practiceService.fetchAll().stream().map(Practice::getFileName).collect(Collectors.toList());
+                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+
+                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
+
+                            for (JsonNode el : jsonSecond) {
+                                for (String practice : practices) {
+                                    if (el.get("name").asText().equals(practice)) {
+                                        practices.remove(practice);
+                                        break;
+                                    }
+                                }
+
+                                if (!practices.isEmpty()) {
+                                    practices.forEach(practiceService::removePractice);
+                                }
+                            }
+                        }
+                        case "4)Materials": {
+                            List<String> materials = materialService.fetchAll().stream().map(Material::getFileName).collect(Collectors.toList());
+                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+
+                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
+
+                            for (JsonNode el : jsonSecond) {
+                                for (String material : materials) {
+                                    if (el.get("name").asText().equals(material)) {
+                                        materials.remove(material);
+                                        break;
+                                    }
+                                }
+
+                                if (!materials.isEmpty()) {
+                                    materials.forEach(materialService::removeMaterial);
+                                }
+                            }
+                        }
+                        case "5)Questions": {
+                            List<String> questions = questionService.fetchAll().stream().map(Question::getFileName).collect(Collectors.toList());
+                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+
+                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
+
+                            for (JsonNode el : jsonSecond) {
+                                for (String question : questions) {
+                                    if (el.get("name").asText().equals(question)) {
+                                        questions.remove(question);
+                                        break;
+                                    }
+                                }
+
+                                if (!questions.isEmpty()) {
+                                    questions.forEach(questionService::removeQuestion);
+                                }
+                            }
+                        }
+                        case "3)Tasks": {
+                            List<String> tasks = taskService.fetchAll().stream().map(Task::getFileName).collect(Collectors.toList());
+                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+
+                            JsonNode jsonSecond = connectDisk(url).get("_embedded").get("items");
+
+                            for (JsonNode el : jsonSecond) {
+                                for (String task : tasks) {
+                                    if (el.get("name").asText().equals(task)) {
+                                        tasks.remove(task);
+                                        break;
+                                    }
+                                }
+
+                                if (!tasks.isEmpty()) {
+                                    tasks.forEach(taskService::removeTask);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     public JsonNode connectDisk(String prefix) {
 

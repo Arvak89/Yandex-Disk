@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -16,11 +18,21 @@ public class QuestionService {
 
     QuestionRepo questionRepo;
 
-    public void saveQuestion(int year, String question, String answer){
+    public void saveQuestion(String fileName, String link) {
 
         questionRepo.save(Question.builder()
-                .question(question)
-                .answer(answer)
+                .fileName(fileName)
+                .link(link)
                 .build());
+    }
+
+    public List<Question> fetchAll() {
+
+        return questionRepo.findAll();
+    }
+
+    public void removeQuestion(String fileName) {
+
+        questionRepo.deleteByFileName(fileName);
     }
 }

@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-public class Material {
+public class Material{
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
@@ -21,8 +21,8 @@ public class Material {
     @Column(name = "link", length = 700)
     String link;
 
-    @Column(name = "name")
-    String name;
+    @Column(name = "file_name")
+    String fileName;
 
     @ManyToOne
     Task task;

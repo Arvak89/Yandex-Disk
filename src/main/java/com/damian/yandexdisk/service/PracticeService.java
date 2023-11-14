@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -23,5 +25,15 @@ public class PracticeService {
                 .fileName(fileName)
                 .link(link)
                 .build());
+    }
+
+    public List<Practice> fetchAll(){
+
+        return practiceRepo.findAll();
+    }
+
+    public void removePractice(String fileName){
+
+        practiceRepo.deleteByFileName(fileName);
     }
 }

@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-public class Practice {
+public class Practice{
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id

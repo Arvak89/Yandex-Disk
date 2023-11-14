@@ -14,25 +14,22 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class Task {
+public class Task{
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column
-    String name;
+    @Column(name = "file_name")
+    String fileName;
 
-    @Column(name = "type")
-    String type;
-
-    @Column
-    String task;
+    @Column(name = "link", length = 700)
+    String link;
 
     @OneToMany(mappedBy = "task")
     List<Material> materials;
 
     @Column
-    Date deadline;
+    String deadline;
 }

@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Builder
 @ToString
-public class Lecture {
+public class Lecture{
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
