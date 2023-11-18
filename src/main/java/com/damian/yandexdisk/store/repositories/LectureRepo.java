@@ -7,5 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LectureRepo extends JpaRepository<Lecture, Long> {
 
     @Transactional
-    public void deleteByFileName(String fileName);
+    void deleteByFileName(String fileName);
 }

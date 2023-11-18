@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@Table(name = "tasks")
 public class Task{
 
     @Id
@@ -30,5 +31,8 @@ public class Task{
     List<Material> materials;
 
     @Column
-    String deadline;
+    Date deadline;
+
+    @Column(name = "document_id")
+    String documentId;
 }

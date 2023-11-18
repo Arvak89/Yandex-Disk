@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-public class Practice{
+@Table(name = "practices")
+public class Practice {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -24,4 +25,7 @@ public class Practice{
     String fileName;
 
     int year;
+
+    @Column(name = "document_id")
+    String documentId;
 }

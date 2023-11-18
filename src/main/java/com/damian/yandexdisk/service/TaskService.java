@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -19,7 +19,7 @@ public class TaskService {
 
     TaskRepo taskRepo;
 
-    public void saveTask(Long id, String fileName, String deadline, String link) {
+    public void saveTask(Long id, String fileName, Date deadline, String link) {
 
         taskRepo.save(Task.builder()
                 .id(id)

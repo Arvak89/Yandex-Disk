@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
+@Table(name = "materials")
 public class Material{
 
     @Id
@@ -25,4 +26,7 @@ public class Material{
 
     @ManyToOne
     Task task;
+
+    @Column(name = "document_id")
+    String documentId;
 }

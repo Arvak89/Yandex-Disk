@@ -11,15 +11,14 @@ import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.sql.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,7 +31,6 @@ public class Disk {
     @Value(value = "${Authorization}")
     @NonFinal
     String authorization;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     RestTemplate restTemplate = new RestTemplate();
 
     LectureService lectureService;
@@ -43,13 +41,13 @@ public class Disk {
 
     ObjectMapper objectMapper;
 
+    //    Метод, который добавляет файлы и здиска в бд
     public void checkNewFiles() {
 
         JsonNode json = connectDisk("");
 
         if (json == objectMapper.nullNode()) {
-            System.out.println("хуятина");
-            System.out.println("check");
+            System.out.println("Ошибка в методе check");
             return;
         }
 
@@ -67,8 +65,7 @@ public class Disk {
                     JsonNode jsonSecond = connectDisk(url);
 
                     if (jsonSecond == objectMapper.nullNode()) {
-                        System.out.println("хуятина");
-                        System.out.println("check");
+                        System.out.println("Ошибка в методе check");
                         return;
                     }
 
@@ -78,6 +75,7 @@ public class Disk {
 
                         String name = el.get("name").asText();
                         String file = el.get("file").asText();
+
                         switch (dir) {
                             case "1)Lectures": {
                                 lectureService.saveLecture(
@@ -101,7 +99,7 @@ public class Disk {
                                 taskService.saveTask(
                                         Long.parseLong(name.substring(0, 1)),
                                         name,
-                                        name.substring(name.indexOf("-") + 1, name.indexOf(".")),
+                                        new Date(new GregorianCalendar(Integer.parseInt(name.substring(name.indexOf("-") + 5, name.indexOf("."))), Integer.parseInt(name.substring(name.indexOf("-") + 3, name.indexOf(".") - 4)), Integer.parseInt(name.substring(name.indexOf("-") + 1, name.indexOf(".") - 6))).getTimeInMillis()),
                                         file
                                 );
                                 break;
@@ -130,13 +128,13 @@ public class Disk {
         }
     }
 
+    //    Метод, который сравнивает базу данных и яндекс диск, и удает файлы из бд, если их нет на диске
     @Transactional
     public void removeOldFiles() {
         JsonNode json = connectDisk("");
 
         if (json == objectMapper.nullNode()) {
-            System.out.println("хуятина");
-            System.out.println("remove");
+            System.out.println("Ошибка в методе remove");
             return;
         }
 
@@ -155,13 +153,13 @@ public class Disk {
                         case "1)Lectures": {
 
                             List<String> lectures = lectureService.fetchAll().stream().map(Lecture::getFileName).collect(Collectors.toList());
+
                             String url = "/" + e.get("name").toString().replaceAll("\"", "");
 
                             JsonNode jsonSecond = connectDisk(url);
 
                             if (jsonSecond == objectMapper.nullNode()) {
-                                System.out.println("хуятина");
-                                System.out.println("remove");
+                                System.out.println("Ошибка в методе remove");
                                 return;
                             }
 
@@ -181,14 +179,15 @@ public class Disk {
                             }
                         }
                         case "2)Practices": {
+
                             List<String> practices = practiceService.fetchAll().stream().map(Practice::getFileName).collect(Collectors.toList());
+
                             String url = "/" + e.get("name").toString().replaceAll("\"", "");
 
                             JsonNode jsonSecond = connectDisk(url);
 
                             if (jsonSecond == objectMapper.nullNode()) {
-                                System.out.println("хуятина");
-                                System.out.println("remove");
+                                System.out.println("Ошибка в методе remove");
                                 return;
                             }
 
@@ -208,14 +207,15 @@ public class Disk {
                             }
                         }
                         case "3)Tasks": {
+
                             List<String> tasks = taskService.fetchAll().stream().map(Task::getFileName).collect(Collectors.toList());
+
                             String url = "/" + e.get("name").toString().replaceAll("\"", "");
 
                             JsonNode jsonSecond = connectDisk(url);
 
                             if (jsonSecond == objectMapper.nullNode()) {
-                                System.out.println("хуятина");
-                                System.out.println("remove");
+                                System.out.println("Ошибка в методе remove");
                                 return;
                             }
 
@@ -235,14 +235,15 @@ public class Disk {
                             }
                         }
                         case "4)Materials": {
+
                             List<String> materials = materialService.fetchAll().stream().map(Material::getFileName).collect(Collectors.toList());
+
                             String url = "/" + e.get("name").toString().replaceAll("\"", "");
 
                             JsonNode jsonSecond = connectDisk(url);
 
                             if (jsonSecond == objectMapper.nullNode()) {
-                                System.out.println("хуятина");
-                                System.out.println("remove");
+                                System.out.println("Ошибка в методе remove");
                                 return;
                             }
 
@@ -262,15 +263,15 @@ public class Disk {
                             }
                         }
                         case "5)Questions": {
+
                             List<String> questions = questionService.fetchAll().stream().map(Question::getFileName).collect(Collectors.toList());
+
                             String url = "/" + e.get("name").toString().replaceAll("\"", "");
-                            System.out.println(url);
 
                             JsonNode jsonSecond = connectDisk(url);
 
                             if (jsonSecond == objectMapper.nullNode()) {
-                                System.out.println("хуятина");
-                                System.out.println("remove");
+                                System.out.println("Ошибка в методе remove");
                                 return;
                             }
 
@@ -295,6 +296,9 @@ public class Disk {
         }
     }
 
+    //    Метод, который подключается к яндекс диску и присылает файлы по какому-то пути
+
+
     @SneakyThrows
     public JsonNode connectDisk(String prefix) {
 
@@ -304,12 +308,14 @@ public class Disk {
 
         ResponseEntity<JsonNode> json = null;
 
+//        Проверка на подключение, если оно удачное то возращается тело ответа, иначе nullNode
         try {
             json = restTemplate.exchange(request, JsonNode.class);
         } catch (HttpClientErrorException e) {
-            System.out.println("Плохой  запрос");
+            System.out.println("Плохой запрос");
+            System.out.println(request);
+            System.out.println(json);
             e.printStackTrace();
-            System.out.println("link: " + prefix);
             return objectMapper.nullNode();
         }
 

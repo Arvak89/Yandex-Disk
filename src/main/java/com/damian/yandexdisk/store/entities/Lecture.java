@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Builder
 @ToString
+@Table(name = "lectures")
 public class Lecture{
 
     @Id
@@ -26,4 +27,7 @@ public class Lecture{
 
     @Column(name = "year", nullable = false)
     int year;
+
+    @Column(name = "document_id")
+    String documentId;
 }

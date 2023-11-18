@@ -23,14 +23,19 @@ public class MaterialService {
 
     public void saveMaterial(Long id, String name, String link, Long taskId) {
 
-        Task task = taskRepo.findById(taskId).orElseThrow(() -> null);
+        Task task = taskRepo.findById(taskId).orElseThrow();
 
-        materialRepo.save(Material.builder()
-                .id(id)
-                .fileName(name)
-                .link(link)
-                .task(task)
-                .build());
+        try {
+            materialRepo.save(Material.builder()
+                    .id(id)
+                    .fileName(name)
+                    .link(link)
+                    .task(task)
+                    .build());
+        } catch (NullPointerException e) {
+            System.out.println("Task не сохранился");
+            e.printStackTrace();
+        }
     }
 
     public List<Material> fetchAll() {

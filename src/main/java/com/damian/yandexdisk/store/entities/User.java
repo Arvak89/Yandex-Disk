@@ -11,19 +11,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Builder
-@Table(name = "questions")
-public class Question{
+@Table(name = "users")
+public class User {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "link", length = 700, nullable = false)
-    String link;
+    @Column(name = "user_name", length = 100)
+    String userName;
 
-    @Column(name = "file_name")
-    String fileName;
+    @Column(name = "chat_id")
+    Long chatId;
 
-    @Column(name = "document_id")
-    String documentId;
 }
