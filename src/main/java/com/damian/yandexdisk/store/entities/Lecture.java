@@ -28,6 +28,8 @@ public class Lecture{
     @Column(name = "year", nullable = false)
     int year;
 
+    String cache;
+
     @Column(name = "document_id")
     String documentId;
 }

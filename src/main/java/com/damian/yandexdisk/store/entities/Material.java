@@ -27,6 +27,8 @@ public class Material{
     @ManyToOne
     Task task;
 
+    String cache;
+
     @Column(name = "document_id")
     String documentId;
 }

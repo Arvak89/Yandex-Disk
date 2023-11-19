@@ -26,6 +26,8 @@ public class Practice {
 
     int year;
 
+    String cache;
+
     @Column(name = "document_id")
     String documentId;
 }

@@ -21,6 +21,7 @@ import java.sql.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class Disk {
 
     ObjectMapper objectMapper;
 
-    //    Метод, который добавляет файлы и здиска в бд
+    // Метод, который добавляет файлы и здиска в бд
     public void checkNewFiles() {
 
         JsonNode json = connectDisk("");
@@ -60,7 +61,9 @@ public class Disk {
                 if (e.get("type").asText().equals("dir")) {
 
                     String dir = e.get("name").asText();
-                    String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                    String url = "/" + e.get("name").asText();
+
+                    System.out.println(url);
 
                     JsonNode jsonSecond = connectDisk(url);
 
@@ -75,50 +78,147 @@ public class Disk {
 
                         String name = el.get("name").asText();
                         String file = el.get("file").asText();
+                        String cache = el.get("md5").asText();
+                        Long id = Long.parseLong(name.substring(0, 1));
 
                         switch (dir) {
                             case "1)Lectures": {
-                                lectureService.saveLecture(
-                                        Long.parseLong(name.substring(0, 1)),
-                                        Integer.parseInt(name.substring(2, 6)),
-                                        name,
-                                        file
-                                );
+
+                                Optional<Lecture> lecture = lectureService.fetchById(id);
+
+                                if (lecture.isEmpty()) {
+                                    lectureService.saveLecture(
+                                            id,
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file,
+                                            cache,
+                                            null
+                                    );
+                                } else {
+                                    String documentId = cache.equals(lecture.get().getCache()) ? lecture.get().getDocumentId() : null;
+
+                                    lectureService.saveLecture(
+                                            id,
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file,
+                                            cache,
+                                            documentId
+                                    );
+                                }
+
                                 break;
                             }
                             case "2)Practices": {
-                                practiceService.savePractice(
-                                        Long.parseLong(name.substring(0, 1)),
-                                        Integer.parseInt(name.substring(2, 6)),
-                                        name,
-                                        file
-                                );
+                                Optional<Practice> practice = practiceService.fetchById(id);
+
+                                if (practice.isEmpty()) {
+                                    practiceService.savePractice(
+                                            id,
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file,
+                                            cache,
+                                            null
+                                    );
+                                } else {
+                                    String documentId = cache.equals(practice.get().getCache()) ? practice.get().getDocumentId() : null;
+
+                                    practiceService.savePractice(
+                                            id,
+                                            Integer.parseInt(name.substring(2, 6)),
+                                            name,
+                                            file,
+                                            cache,
+                                            documentId
+                                    );
+                                }
                                 break;
                             }
                             case "3)Tasks": {
-                                taskService.saveTask(
-                                        Long.parseLong(name.substring(0, 1)),
-                                        name,
-                                        new Date(new GregorianCalendar(Integer.parseInt(name.substring(name.indexOf("-") + 5, name.indexOf("."))), Integer.parseInt(name.substring(name.indexOf("-") + 3, name.indexOf(".") - 4)), Integer.parseInt(name.substring(name.indexOf("-") + 1, name.indexOf(".") - 6))).getTimeInMillis()),
-                                        file
-                                );
+
+                                Optional<Task> task = taskService.fetchById(id);
+
+                                int year = Integer.parseInt(name.substring(name.indexOf("-") + 5, name.indexOf(".")));
+                                int month = Integer.parseInt(name.substring(name.indexOf("-") + 3, name.indexOf(".") - 4));
+                                int dayOfMonth = Integer.parseInt(name.substring(name.indexOf("-") + 1, name.indexOf(".") - 6));
+
+                                if (task.isEmpty()) {
+
+                                    taskService.saveTask(
+                                            id,
+                                            name,
+                                            new Date(new GregorianCalendar(year, month, dayOfMonth).getTimeInMillis()),
+                                            file,
+                                            cache,
+                                            null
+                                    );
+                                } else {
+                                    String documentId = cache.equals(task.get().getCache()) ? task.get().getDocumentId() : null;
+
+                                    taskService.saveTask(
+                                            id,
+                                            name,
+                                            new Date(new GregorianCalendar(year, month, dayOfMonth).getTimeInMillis()),
+                                            file,
+                                            cache,
+
+                                            documentId
+                                    );
+                                }
                                 break;
                             }
                             case "4)Materials": {
-                                materialService.saveMaterial(
-                                        Long.parseLong(name.substring(0, 1)),
-                                        name,
-                                        file,
-                                        Long.valueOf(name.substring(2, 3))
-                                );
+
+                                Optional<Material> material = materialService.fetchById(id);
+
+                                if (material.isEmpty()) {
+                                    materialService.saveMaterial(
+                                            id,
+                                            name,
+                                            file,
+                                            Long.valueOf(name.substring(2, 3)),
+                                            cache,
+                                            null
+                                    );
+                                } else {
+                                    String documentId = cache.equals(material.get().getCache()) ? material.get().getDocumentId() : null;
+
+                                    materialService.saveMaterial(
+                                            id,
+                                            name,
+                                            file,
+                                            Long.valueOf(name.substring(2, 3)),
+                                            cache,
+                                            documentId
+                                    );
+                                }
                                 break;
                             }
                             case "5)Questions": {
-                                questionService.saveQuestion(
-                                        Long.parseLong(name.substring(0, 1)),
-                                        name,
-                                        file
-                                );
+
+                                Optional<Question> question = questionService.fetchById(id);
+
+                                if (question.isEmpty()) {
+                                    questionService.saveQuestion(
+                                            id,
+                                            name,
+                                            file,
+                                            cache,
+                                            null
+                                    );
+                                } else {
+                                    String documentId = cache.equals(question.get().getCache()) ? question.get().getDocumentId() : null;
+
+                                    questionService.saveQuestion(
+                                            id,
+                                            name,
+                                            file,
+                                            cache,
+                                            documentId
+                                    );
+                                }
                                 break;
                             }
                         }
@@ -154,7 +254,7 @@ public class Disk {
 
                             List<String> lectures = lectureService.fetchAll().stream().map(Lecture::getFileName).collect(Collectors.toList());
 
-                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                            String url = "/" + e.get("name").asText();
 
                             JsonNode jsonSecond = connectDisk(url);
 
@@ -182,7 +282,7 @@ public class Disk {
 
                             List<String> practices = practiceService.fetchAll().stream().map(Practice::getFileName).collect(Collectors.toList());
 
-                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                            String url = "/" + e.get("name").asText();
 
                             JsonNode jsonSecond = connectDisk(url);
 
@@ -210,7 +310,7 @@ public class Disk {
 
                             List<String> tasks = taskService.fetchAll().stream().map(Task::getFileName).collect(Collectors.toList());
 
-                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                            String url = "/" + e.get("name").asText();
 
                             JsonNode jsonSecond = connectDisk(url);
 
@@ -238,7 +338,7 @@ public class Disk {
 
                             List<String> materials = materialService.fetchAll().stream().map(Material::getFileName).collect(Collectors.toList());
 
-                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                            String url = "/" + e.get("name").asText();
 
                             JsonNode jsonSecond = connectDisk(url);
 
@@ -266,7 +366,7 @@ public class Disk {
 
                             List<String> questions = questionService.fetchAll().stream().map(Question::getFileName).collect(Collectors.toList());
 
-                            String url = "/" + e.get("name").toString().replaceAll("\"", "");
+                            String url = "/" + e.get("name").asText();
 
                             JsonNode jsonSecond = connectDisk(url);
 
@@ -306,7 +406,7 @@ public class Disk {
                 .header("Authorization", authorization)
                 .build();
 
-        ResponseEntity<JsonNode> json = null;
+        ResponseEntity<JsonNode> json;
 
 //        Проверка на подключение, если оно удачное то возращается тело ответа, иначе nullNode
         try {
@@ -314,7 +414,6 @@ public class Disk {
         } catch (HttpClientErrorException e) {
             System.out.println("Плохой запрос");
             System.out.println(request);
-            System.out.println(json);
             e.printStackTrace();
             return objectMapper.nullNode();
         }

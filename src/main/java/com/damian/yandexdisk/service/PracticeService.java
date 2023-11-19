@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,23 +19,30 @@ public class PracticeService {
 
     PracticeRepo practiceRepo;
 
-    public void savePractice(Long id, int year, String fileName, String link){
+    public void savePractice(Long id, int year, String fileName, String link, String cache, String documentId) {
 
         practiceRepo.save(Practice.builder()
-                        .id(id)
+                .id(id)
                 .year(year)
                 .fileName(fileName)
                 .link(link)
+                .cache(cache)
+                .documentId(documentId)
                 .build());
     }
 
-    public List<Practice> fetchAll(){
+    public List<Practice> fetchAll() {
 
         return practiceRepo.findAll();
     }
 
-    public void removePractice(String fileName){
+    public void removePractice(String fileName) {
 
         practiceRepo.deleteByFileName(fileName);
+    }
+
+    public Optional<Practice> fetchById(Long id) {
+
+        return practiceRepo.findById(id);
     }
 }

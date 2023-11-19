@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +19,14 @@ public class QuestionService {
 
     QuestionRepo questionRepo;
 
-    public void saveQuestion(Long id, String fileName, String link) {
+    public void saveQuestion(Long id, String fileName, String link, String cache, String documentId) {
 
         questionRepo.save(Question.builder()
-                        .id(id)
+                .id(id)
                 .fileName(fileName)
                 .link(link)
+                .cache(cache)
+                .documentId(documentId)
                 .build());
     }
 
@@ -35,5 +38,10 @@ public class QuestionService {
     public void removeQuestion(String fileName) {
 
         questionRepo.deleteByFileName(fileName);
+    }
+
+    public Optional<Question> fetchById(Long id) {
+
+        return questionRepo.findById(id);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +20,15 @@ public class TaskService {
 
     TaskRepo taskRepo;
 
-    public void saveTask(Long id, String fileName, Date deadline, String link) {
+    public void saveTask(Long id, String fileName, Date deadline, String link, String cache, String documentId) {
 
         taskRepo.save(Task.builder()
                 .id(id)
                 .fileName(fileName)
                 .deadline(deadline)
                 .link(link)
+                .cache(cache)
+                .documentId(documentId)
                 .build());
     }
 
@@ -37,5 +40,10 @@ public class TaskService {
     public void removeTask(String fileName) {
 
         taskRepo.deleteByFileName(fileName);
+    }
+
+    public Optional<Task> fetchById(Long id) {
+
+        return taskRepo.findById(id);
     }
 }

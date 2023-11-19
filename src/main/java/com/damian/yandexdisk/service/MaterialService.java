@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,20 +22,24 @@ public class MaterialService {
     MaterialRepo materialRepo;
     TaskRepo taskRepo;
 
-    public void saveMaterial(Long id, String name, String link, Long taskId) {
+    public void saveMaterial(Long id, String name, String link, Long taskId, String cache, String documentId) {
 
-        Task task = taskRepo.findById(taskId).orElseThrow();
+        Optional<Task> task = taskRepo.findById(taskId);
 
-        try {
-            materialRepo.save(Material.builder()
-                    .id(id)
-                    .fileName(name)
-                    .link(link)
-                    .task(task)
-                    .build());
-        } catch (NullPointerException e) {
-            System.out.println("Task не сохранился");
-            e.printStackTrace();
+        if (task.isPresent()) {
+            try {
+                materialRepo.save(Material.builder()
+                        .id(id)
+                        .fileName(name)
+                        .link(link)
+                        .task(task.get())
+                        .cache(cache)
+                        .documentId(documentId)
+                        .build());
+            } catch (NullPointerException e) {
+                System.out.println("Task не сохранился");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -46,5 +51,10 @@ public class MaterialService {
     public void removeMaterial(String fileName) {
 
         materialRepo.deleteByFileName(fileName);
+    }
+
+    public Optional<Material> fetchById(Long id) {
+
+        return materialRepo.findById(id);
     }
 }

@@ -35,4 +35,6 @@ public class Task{
 
     @Column(name = "document_id")
     String documentId;
+
+    String cache;
 }

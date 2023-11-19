@@ -36,7 +36,6 @@ public class YandexDiskApplication implements CommandLineRunner {
             public void run() {
                 System.out.println("remove");
                 disk.removeOldFiles();
-                Thread.sleep(1000 * 5);
                 System.out.println("check");
                 disk.checkNewFiles();
             }

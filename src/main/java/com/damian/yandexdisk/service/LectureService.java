@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,23 +18,30 @@ public class LectureService {
 
     LectureRepo lectureRepo;
 
-    public void saveLecture(Long id, int year, String fileName, String link){
+    public void saveLecture(Long id, int year, String fileName, String link, String cache, String documentId) {
 
         lectureRepo.save(Lecture.builder()
-                        .id(id)
+                .id(id)
                 .year(year)
                 .fileName(fileName)
                 .link(link)
+                .cache(cache)
+                .documentId(documentId)
                 .build());
     }
 
-    public List<Lecture> fetchAll(){
+    public List<Lecture> fetchAll() {
 
         return lectureRepo.findAll();
     }
 
-    public void removeLecture(String fileName){
+    public void removeLecture(String fileName) {
 
         lectureRepo.deleteByFileName(fileName);
+    }
+
+    public Optional<Lecture> fetchById(long id) {
+
+        return lectureRepo.findById(id);
     }
 }

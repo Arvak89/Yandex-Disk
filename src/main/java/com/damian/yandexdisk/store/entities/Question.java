@@ -24,6 +24,8 @@ public class Question{
     @Column(name = "file_name")
     String fileName;
 
+    String cache;
+
     @Column(name = "document_id")
     String documentId;
 }
