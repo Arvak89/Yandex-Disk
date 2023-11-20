@@ -22,6 +22,7 @@ public class YandexDiskApplication implements CommandLineRunner {
 
     Disk disk;
 
+
     public static void main(String[] args) {
         SpringApplication.run(YandexDiskApplication.class, args);
     }

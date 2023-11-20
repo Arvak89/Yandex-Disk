@@ -43,6 +43,7 @@ public class Disk {
     ObjectMapper objectMapper;
 
     // Метод, который добавляет файлы и здиска в бд
+    @Transactional
     public void checkNewFiles() {
 
         JsonNode json = connectDisk("");
@@ -141,8 +142,14 @@ public class Disk {
                                 Optional<Task> task = taskService.fetchById(id);
 
                                 int year = Integer.parseInt(name.substring(name.indexOf("-") + 5, name.indexOf(".")));
-                                int month = Integer.parseInt(name.substring(name.indexOf("-") + 3, name.indexOf(".") - 4));
+                                int month = Integer.parseInt(name.substring(name.indexOf("-") + 3, name.indexOf(".") - 4)) - 1;
                                 int dayOfMonth = Integer.parseInt(name.substring(name.indexOf("-") + 1, name.indexOf(".") - 6));
+
+                                System.out.println(name);
+                                System.out.println(year);
+                                System.out.println(month);
+                                System.out.println(dayOfMonth);
+                                System.out.println(new GregorianCalendar(year, month, dayOfMonth).getTimeInMillis());
 
                                 if (task.isEmpty()) {
 
